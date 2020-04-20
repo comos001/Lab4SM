@@ -26,28 +26,29 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test "PINA: 0x04, 0x00 => state: Press2, PINB: 0x00"
-setPINA 0x04
-continue 2
-setPINA 0x00
-continue 2
-expect State Press2
-expectPORTB 0x00
-checkResult
 
-test "PINA: 0x04, 0x00, 0x02 =>state: Init,  PINB: 0x01"
-# Set inputs
-setPINA 0x04
-continue 2
-setPINA 0x00
-# # Continue for several ticks
-continue 2
-setPINA 0x02
-continue 2
-# # Set expect values
+# At sequence from waitA0: A0, !A0, A1 => PORTB: 1
+test "PINA: 0x01, 0x00 => PORTB: 0x02, state: BR1"
+ set State = Init 
+ setPINA 0x01
+ continue 2
+ setPINA 0x00
+ continue 2 
+ expectPORTB 0x02
+ expect State BR1
+ checkResult
+  
+test "PINA: 0x01, 0x00 => PORTB: 0x02, state: BR1"
+ set State = BR1
+ setPINA 0x01
+ continue 2
+ setPINA 0x00
+ continue 2
  expectPORTB 0x01
-# # Check pass/fail
-checkResult
+ expect State Init
+ checkResult
+
+
 
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed

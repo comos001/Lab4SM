@@ -22,6 +22,7 @@ enum Lock_States {Init, Press1, Press2, Unlock} State;
 void safelock(){
 	switch (State) {
 		case Init:
+			PORTB = 0x00;
 			if (PINA == 0x04){
 				State = Press1;
 			} 	
@@ -52,17 +53,14 @@ void safelock(){
 			}
 		break;
 		case Unlock:
+			PORTB = 0x01;
 			if (PINA == 0x80){
 				State = Init;
-				PORTB = 0x00;
-			}		
-			else if (PORTB == 0x00) {		
-				PORTB = 0x01;
-			}
+			}				
 			else {
-				PORTB = 0x00;
-			} 
-			break;
+				State = Unlock;
+			}
+		break;
 		default:
  			State = Init;
 			break;
@@ -78,7 +76,6 @@ int main(void) {
     /* Insert your solution below */
     while (1) {
 	safelock();
-
     }
 	
 return 1;

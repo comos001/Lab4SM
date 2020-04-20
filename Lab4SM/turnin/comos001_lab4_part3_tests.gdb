@@ -26,6 +26,14 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
+test "PINA: 0x04 => state: Press1, PINB: 0x00"
+setPINA 0x04
+continue 2
+expect State Press1
+expectPORTB 0x00
+checkResult
+
+
 test "PINA: 0x04, 0x00 => state: Press2, PINB: 0x00"
 setPINA 0x04
 continue 2
@@ -35,19 +43,6 @@ expect State Press2
 expectPORTB 0x00
 checkResult
 
-test "PINA: 0x04, 0x00, 0x02 =>state: Init,  PINB: 0x01"
-# Set inputs
-setPINA 0x04
-continue 2
-setPINA 0x00
-# # Continue for several ticks
-continue 2
-setPINA 0x02
-continue 2
-# # Set expect values
- expectPORTB 0x01
-# # Check pass/fail
-checkResult
 
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
