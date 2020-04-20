@@ -31,7 +31,6 @@ void LED_switch(){
 			} 	
 			else {
 				State = BP1;
-				PORTB = (PORTB & 0xFC) | 0x02;
 			}
 		break;
 		case BP1:
@@ -41,7 +40,6 @@ void LED_switch(){
 			}	
 			else {
 				State = BR1;
-				PORTB = (PORTB & 0xFC) | 0x02;
 			}
 		break;
 		case BR1:
@@ -51,7 +49,6 @@ void LED_switch(){
 			}
 			else {
 				State = BP2;
-				PORTB = (PORTB & 0xFC) | 0x01;
 			}
 		break;
 		case BP2:
@@ -61,7 +58,7 @@ void LED_switch(){
                         }
                         else {
                                 State = Init;
-                                PORTB = (PORTB & 0xFC) | 0x01;
+                       
                         }
 		 break;
 
