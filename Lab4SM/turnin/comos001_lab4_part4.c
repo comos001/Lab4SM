@@ -12,74 +12,80 @@
 #include "simAVRHeader.h"
 #endif
 
+enum SM_States {SM_Start, SM_1, SM_2, SM_3} state;
 
-
-enum Lock_States {Init, Press1, Press2, Unlock} State;
-
-        /*initial conditions*/
-
-
-void safelock(){
-	switch (State) {
-		case Init:
-			if (PINA == 0x04){
-				State = Press1;
-			} 	
-			else {
-				State = Init;
+void tickFct() {
+	switch(state) {
+		case SM_Start:
+			if ((PINA & 0x07)== 0x04) {
+				state = SM_1;
+			} else {
+				state = SM_Start;
 			}
-		break;		
-		case Press1:
-			if (PINA == 0x04){
-				State = Press1;
+			break;
+		case SM_1:
+			if ((PINA & 0x07) == 0x04) {
+				state = SM_1;
+			} else if ((PINA & 0x07) == 0x00) {
+				state = SM_2;
+			} else {
+				state = SM_Start;
 			}
-			else if (PINA == 0x00){
-				State = Press2;
+			break;
+		case SM_2:
+			if ((PINA & 0x07) == 0x00)  {
+				state = SM_2;
+			} else if ((PINA & 0x07) == 0x02) {
+				state = SM_3;
+			} else {
+				state = SM_Start;
 			}
-			else {
-				State = Init;
+			break;
+		case SM_3:
+			if ((PINA & 0x80) == 0x80) {
+				state = SM_Start;
 			}
-		break;
-		case Press2:
-			if (PINA == 0x00){
-				State = Press2;
-			}	
-			else if (PINA == 0x02){
-                                State = Unlock;
-                        }
-			else{
-				State = Init;
-			}
-		break;
-		case Unlock:
-			if (PINA == 0x80){
-				State = Init;
-				PORTB = 0x00;
-			}		
-			else if (PORTB == 0x00) {		
-				PORTB = 0x01;
-			}
-			else {
-				PORTB = 0x00;
-			} 
+			state = SM_Start;
 			break;
 		default:
- 			State = Init;
+			state = SM_Start;
 			break;
-		}
+
+	}
+	switch(state) {
+		case SM_Start:
+		case SM_1:
+		case SM_2:
+			if ((PINA & 0x80) == 0x80) {
+				PORTB = 0x00;
+			}
+			break;
+		case SM_3:
+			if ((PINA & 0x80) == 0x80) {
+				PORTB = 0x00;
+			}
+			else if (PORTB == 0x00) {
+				PORTB = 0x01;
+			}
+			else if (PORTB == 0x01) {
+				PORTB = 0x00;
+			}
+			break;
+		default:
+			PORTB = 0x00;
+			break;
+	}
 }
+
+
 int main(void) {
     /* Insert DDR and PORT initializations */
-	DDRA = 0x00; 
-	DDRB= 0xFF; PORTB = 0x00;
-	/*initial conditions*/
-	State = Init;
-	PORTB = 0x00;;
+    state = SM_Start;
+    DDRA = 0x00; PORTA = 0xFF;
+    DDRB = 0xFF; PORTB = 0x00;
     /* Insert your solution below */
     while (1) {
-	safelock();
-
+	tickFct();
     }
-	
-return 1;
+    return 1;
 }
