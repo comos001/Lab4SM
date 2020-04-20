@@ -73,7 +73,10 @@ int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00;
 	DDRB = 0xFF; PORTB = 0x00;
+	unsigned char temp = 0x00;
+	unsigned char out = 0x00;
 	out = 0x00;
+	/*initial conditions*/
 	State = Start;
 	PORTB = out;
     /* Insert your solution below */
